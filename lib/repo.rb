@@ -48,7 +48,7 @@ class Repo
   # Users are encouraged to set the webhook for the repo: username.ruhoh.com
   # but really any repo that has the webhook will run.
   def git_url
-    "git@github.com:#{@payload['repository']['owner']['name']}/#{@payload['repository']['name']}.git"
+    "git://github.com/#{@payload['repository']['owner']['name']}/#{@payload['repository']['name']}.git"
   end
   
   # This repos git directory
