@@ -1,3 +1,6 @@
+require 'ruhoh'
+require 'ruhoh/compiler'
+
 class Repo
   TmpDirectory     = '/tmp'
   RepoDirectory    = File.expand_path(File.join('~', 'ruhoh-repos'))
@@ -21,12 +24,12 @@ class Repo
   # TODO: Make sure to properly handle errors when compiling.
   def deploy
     FileUtils.cd(self.repo_directory) {
-      system('rm', '-r', self.tmp_directory)
-      if system('ruhoh', 'compile', self.tmp_directory)
-        FileUtils.mkdir_p self.target_directory
-        system('rsync', '-az', '--stats', '--delete', "#{self.tmp_directory}/.", self.target_directory)
-      end
-      system('rm', '-r', self.tmp_directory)
+      Ruhoh.setup
+      Ruhoh::Compiler.new(self.tmp_directory).compile
+      
+      FileUtils.mkdir_p self.target_directory
+      system('rsync', '-az', '--stats', '--delete', "#{self.tmp_directory}/.", self.target_directory)
+      FileUtils.rm_r(self.tmp_directory) if File.exist?(self.tmp_directory)
     }
   end
   
