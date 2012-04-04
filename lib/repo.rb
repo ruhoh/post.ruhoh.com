@@ -38,7 +38,7 @@ class Repo
   # username.ruhoh.com
   # NOTE: All repos that post to the users endpoint will update the same site for now:
   def site_name
-    @payload['repository']['owner']['name']
+    "#{@payload['repository']['owner']['name']}.ruhoh.com"
   end
 
   # Full name is the repository owner + repository name
