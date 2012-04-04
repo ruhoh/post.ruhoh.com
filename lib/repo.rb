@@ -2,39 +2,39 @@ require 'ruhoh'
 require 'ruhoh/compiler'
 
 class Repo
-  TmpDirectory     = '/tmp'
-  RepoDirectory    = File.expand_path(File.join('~', 'repos'))
-  TargetDirectory  = File.expand_path(File.join('~', 'www'))
+  TmpPath     = '/tmp'
+  RepoPath    = File.expand_path(File.join('~', 'repos'))
+  TargetPath  = File.expand_path(File.join('~', 'www'))
 
   def initialize(github_payload)
     @payload = github_payload
   end
   
   def update
-    if File.exist? File.join(self.repo_directory, '.git')
-      return FileUtils.cd(self.repo_directory) {
+    if File.exist? File.join(self.repo_path, '.git')
+      return FileUtils.cd(self.repo_path) {
         return system('git', 'pull', 'origin', 'master')
       }
     else
-      FileUtils.mkdir_p self.repo_directory
-      return system('git', 'clone', self.git_url, self.repo_directory)
+      FileUtils.mkdir_p self.repo_path
+      return system('git', 'clone', self.git_url, self.repo_path)
     end
   end
   
   # TODO: Make sure to properly handle errors when compiling.
   def deploy
-    FileUtils.cd(self.repo_directory) {
+    FileUtils.cd(self.repo_path) {
       Ruhoh.setup
-      Ruhoh::Compiler.new(self.tmp_directory).compile
+      Ruhoh::Compiler.new(self.tmp_path).compile
       
-      FileUtils.mkdir_p self.target_directory
-      system('rsync', '-az', '--stats', '--delete', "#{self.tmp_directory}/.", self.target_directory)
-      FileUtils.rm_r(self.tmp_directory) if File.exist?(self.tmp_directory)
+      FileUtils.mkdir_p self.target_path
+      system('rsync', '-az', '--stats', '--delete', "#{self.tmp_path}/.", self.target_path)
+      FileUtils.rm_r(self.tmp_path) if File.exist?(self.tmp_path)
     }
   end
   
   # Currently all repos from a given GitHub user will be attached to only the user's username.
-  # In other word's a user only gets one static website in ruhoh for now:
+  # In other words a user only gets one static website in ruhoh for now:
   # username.ruhoh.com
   # NOTE: All repos that post to the users endpoint will update the same site for now:
   def site_name
@@ -55,17 +55,17 @@ class Repo
   end
   
   # This repos git directory
-  def repo_directory
-    File.join(RepoDirectory, self.full_name)
+  def repo_path
+    File.join(RepoPath, self.full_name)
   end
   
-  def tmp_directory
-    File.join(TmpDirectory, self.site_name)
+  def tmp_path
+    File.join(TmpPath, self.site_name)
   end
   
   # Where this repo will compile its website to
-  def target_directory
-    File.join(TargetDirectory, self.site_name)
+  def target_path
+    File.join(TargetPath, self.site_name)
   end
   
   def valid_payload?
