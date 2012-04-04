@@ -27,7 +27,7 @@ post '/' do
   payload = JSON.parse(params['payload'])
   repo = Repo.new(payload)
    
-  halt("invalid GitHub payload") unless repo.valid_payload?
+  halt("invalid GitHub payload") unless repo.valid?
   repo.deploy if repo.update
 end
 
