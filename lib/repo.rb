@@ -3,8 +3,8 @@ require 'ruhoh/compiler'
 
 class Repo
   TmpDirectory     = '/tmp'
-  RepoDirectory    = File.expand_path(File.join('~', 'ruhoh-repos'))
-  TargetDirectory  = File.expand_path(File.join('~', 'ruhoh-www'))
+  RepoDirectory    = File.expand_path(File.join('~', 'repos'))
+  TargetDirectory  = File.expand_path(File.join('~', 'www'))
 
   def initialize(github_payload)
     @payload = github_payload
