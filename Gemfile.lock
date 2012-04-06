@@ -1,0 +1,31 @@
+GIT
+  remote: https://github.com/ruhoh/ruhoh.rb.git
+  revision: a5a8f196345b594d7cd0b54394014205d05175a0
+  specs:
+    ruhoh (0.0.3)
+      directory_watcher (~> 1.4)
+      maruku (~> 0.6)
+      mustache (~> 0.99)
+      rack (~> 1.4)
+
+GEM
+  remote: http://rubygems.org/
+  specs:
+    directory_watcher (1.4.1)
+    maruku (0.6.0)
+      syntax (>= 1.0.0)
+    mustache (0.99.4)
+    rack (1.4.1)
+    rake (0.9.2.2)
+    syntax (1.0.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  directory_watcher (~> 1.4)
+  maruku (~> 0.6)
+  mustache (~> 0.99)
+  rack (~> 1.4)
+  rake
+  ruhoh!
