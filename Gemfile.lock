@@ -1,8 +1,8 @@
 GIT
   remote: https://github.com/ruhoh/ruhoh.rb.git
-  revision: a5a8f196345b594d7cd0b54394014205d05175a0
+  revision: 336125d2f5c5d9ba4e6f0c4a2ea1da4605977bcc
   specs:
-    ruhoh (0.0.3)
+    ruhoh (0.0.4)
       directory_watcher (~> 1.4)
       maruku (~> 0.6)
       mustache (~> 0.99)
