@@ -26,14 +26,38 @@ class Repo
     return self.log("ERROR: Could not update Git repository") unless self.update
     self.deploy
   end
-  
+
+  # Update the repository from origin (GitHub).
+  # If we don't have the repo OR the repo is not mergeable with origin, we clone new.
+  # Else we can fetch and merge.
+  #
+  # Notes: 
+  #   merge-base will return the common ancestor sha1 of the two branches.
+  #   no ancestor means the branches are not mergeable.
   def update
-    if File.exist? File.join(self.repo_path, '.git')
-      return FileUtils.cd(self.repo_path) {
-        return system('git', 'pull', 'origin', 'master')
-      }
+    return self.clone unless File.exist? File.join(self.repo_path, '.git')
+
+    FileUtils.cd(self.repo_path) {
+      system('git', 'fetch', 'origin')
+
+      if `git merge-base origin/master master`.empty?
+        return self.clone 
+      else
+        return system('git', 'merge', 'origin/master')
+      end
+    }
+  end
+  
+  # git clone the repository from GitHub even if we have an existing repo
+  # as it may be out of sync with the origin.
+  def clone
+    if FileTest.directory? self.repo_path
+      fresh_clone = "#{self.repo_path}-fresh"
+      return false unless system('git', 'clone', self.git_url, fresh_clone)
+    
+      FileUtils.rm_r self.repo_path
+      FileUtils.mv fresh_clone, self.repo_path
     else
-      FileUtils.mkdir_p self.repo_path
       return system('git', 'clone', self.git_url, self.repo_path)
     end
   end
