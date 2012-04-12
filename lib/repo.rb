@@ -14,9 +14,17 @@ class Repo
   TmpPath     = '/tmp'
   RepoPath    = File.expand_path(File.join('~', 'repos'))
   TargetPath  = File.expand_path(File.join('~', 'www'))
+  LogPath     = File.expand_path(File.join('~', 'user-logs'))
 
   def initialize(github_payload)
     self.parse_payload(github_payload)
+  end
+  
+  # Try full deploy
+  def try_deploy
+    return self.log("ERROR: Invalid GitHub Payload") unless self.valid?
+    return self.log("ERROR: Could not update Git repository") unless self.update
+    self.deploy
   end
   
   def update
@@ -30,15 +38,39 @@ class Repo
     end
   end
   
-  # TODO: Make sure to properly handle errors when compiling.
   def deploy
     FileUtils.cd(self.repo_path) {
-      Ruhoh.setup
+      # compile
+      Ruhoh.setup(:log_file => self.log_path)
       Ruhoh::Compiler.new(self.tmp_path).compile
-      
+
+      # move to www directory
       FileUtils.mkdir_p self.target_path
-      system('rsync', '-az', '--stats', '--delete', "#{self.tmp_path}/.", self.target_path)
+      unless system('rsync', '-az', '--stats', '--delete', "#{self.tmp_path}/.", self.target_path)
+        self.log("ERROR: Compiled blog failed to rysnc to www directory. This is a system error and has been reported!")
+        return false
+      end
       FileUtils.rm_r(self.tmp_path) if File.exist?(self.tmp_path)
+    }
+    
+    self.log("SUCCESS: Blog compiled and deployed.")
+    true
+    
+  # This is a standard exit from Ruhoh.log.error which has already been addressed.
+  # Most typically due to invalid blog configuration.
+  rescue SystemExit
+    false  
+  # This is an unforseen exception that should not happen.
+  rescue Exception => e  
+    self.log(e)
+  end
+  
+  def log(message)
+    FileUtils.mkdir_p File.dirname(self.log_path)
+    File.open(self.log_path, "a") { |f|
+      f.puts '---'
+      f.puts Time.now.utc
+      f.puts message
     }
   end
   
@@ -75,6 +107,10 @@ class Repo
   # Where this repo will compile its website to
   def target_path
     File.join(TargetPath, self.site_name)
+  end
+  
+  def log_path
+    File.join(LogPath, "#{self.site_name}.txt")
   end
   
   def parse_payload(github_payload)
