@@ -87,6 +87,7 @@ class Repo
   # This is an unforseen exception that should not happen.
   rescue Exception => e  
     self.log(e)
+    puts e.backtrace.inspect
   end
   
   def log(message)
