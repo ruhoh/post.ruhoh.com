@@ -1,8 +1,8 @@
 GIT
   remote: https://github.com/ruhoh/ruhoh.rb.git
-  revision: bee04e553b02845474213f3569ab535584e0240c
+  revision: 385495b13d7600551dcf33422497f3069b6dcaed
   specs:
-    ruhoh (0.0.6)
+    ruhoh (0.1.3)
       directory_watcher (~> 1.4)
       maruku (~> 0.6)
       mustache (~> 0.99)
@@ -54,5 +54,5 @@ DEPENDENCIES
   omniauth-github
   rack (~> 1.4)
   rake
-  ruhoh (= 0.0.6)!
+  ruhoh (= 0.1.3)!
   sinatra (~> 1.3)
