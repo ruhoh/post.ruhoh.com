@@ -10,6 +10,15 @@ require 'fileutils'
 
 require 'repo'
 
+airbrake_config = File.join('config', 'airbrake.json')
+if File.exist?(airbrake_config)
+  require 'airbrake'
+  airbrake_config = File.open(airbrake_config) {|f| JSON.parse(f.read) }
+  Airbrake.configure {|config| config.api_key = airbrake_config['apikey'] }
+  use Airbrake::Rack
+  enable :raise_errors
+end
+  
 use Rack::Session::Cookie
 use OmniAuth::Builder do
   github_config = File.join('config', 'github.json')
