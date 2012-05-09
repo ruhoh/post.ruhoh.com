@@ -83,11 +83,7 @@ class Repo
   # This is a standard exit from Ruhoh.log.error which has already been addressed.
   # Most typically due to invalid blog configuration.
   rescue SystemExit
-    false  
-  # This is an unforseen exception that should not happen.
-  rescue Exception => e  
-    self.log(e)
-    puts e.backtrace.inspect
+    false
   end
   
   def log(message)
