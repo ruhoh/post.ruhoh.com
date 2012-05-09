@@ -43,7 +43,7 @@ class Repo
       if `git merge-base origin/master master`.empty?
         return self.clone 
       else
-        return system('git', 'merge', 'origin/master')
+        return system('git', 'reset', '--hard', 'origin/master')
       end
     }
   end
