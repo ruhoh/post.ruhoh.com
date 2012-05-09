@@ -25,7 +25,7 @@ use OmniAuth::Builder do
   next unless File.exist?(github_config)
   
   github_config = File.open(github_config) {|f| JSON.parse(f.read) }
-  provider :github, github_config["client_id"], github_config["secr"]
+  provider :github, github_config["client_id"], github_config["secret"]
 end
 
 get '/' do
