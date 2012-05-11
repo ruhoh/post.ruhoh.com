@@ -38,7 +38,7 @@ GEM
     rack-protection (1.2.0)
       rack
     rake (0.9.2.2)
-    ruhoh (0.2.0)
+    ruhoh (0.2.1)
       directory_watcher (~> 1.4)
       maruku (~> 0.6)
       mustache (~> 0.99)
@@ -60,5 +60,5 @@ DEPENDENCIES
   omniauth-github
   rack (~> 1.4)
   rake (~> 0.9)
-  ruhoh (= 0.2.0)
+  ruhoh (= 0.2.1)
   sinatra (~> 1.3)
