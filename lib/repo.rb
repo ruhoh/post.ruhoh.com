@@ -65,8 +65,9 @@ class Repo
   def deploy
     FileUtils.cd(self.repo_path) {
       # compile
-      Ruhoh.setup(:log_file => self.log_path)
-      Ruhoh::Compiler.new(self.tmp_path).compile
+      Ruhoh.setup(:log_file => self.log_path, :enable_plugins => false)
+      Ruhoh::DB.update_all
+      Ruhoh::Compiler.compile(self.tmp_path)
 
       # move to www directory
       FileUtils.mkdir_p self.target_path

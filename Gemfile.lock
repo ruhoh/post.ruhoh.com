@@ -1,3 +1,14 @@
+GIT
+  remote: https://github.com/ruhoh/ruhoh.rb.git
+  revision: 4ec170265792097e3018f07cb4612623f8df815b
+  specs:
+    ruhoh (0.3.0)
+      directory_watcher (~> 1.4)
+      mustache (~> 0.99)
+      psych (~> 1.3)
+      rack (~> 1.4)
+      redcarpet (~> 2.1)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -16,9 +27,6 @@ GEM
       rack (~> 1.1)
     hashie (1.2.0)
     i18n (0.6.0)
-    kramdown (0.13.5)
-    maruku (0.6.0)
-      syntax (>= 1.0.0)
     multi_json (1.2.0)
     multipart-post (1.1.5)
     mustache (0.99.4)
@@ -39,17 +47,11 @@ GEM
     rack-protection (1.2.0)
       rack
     rake (0.9.2.2)
-    ruhoh (0.2.1)
-      directory_watcher (~> 1.4)
-      maruku (~> 0.6)
-      mustache (~> 0.99)
-      psych (~> 1.3)
-      rack (~> 1.4)
+    redcarpet (2.1.1)
     sinatra (1.3.2)
       rack (~> 1.3, >= 1.3.6)
       rack-protection (~> 1.2)
       tilt (~> 1.3, >= 1.3.3)
-    syntax (1.0.0)
     tilt (1.3.3)
 
 PLATFORMS
@@ -57,10 +59,9 @@ PLATFORMS
 
 DEPENDENCIES
   airbrake (~> 3.0)
-  kramdown (~> 0.13)
   omniauth
   omniauth-github
   rack (~> 1.4)
   rake (~> 0.9)
-  ruhoh (= 0.2.1)
+  ruhoh (= 0.3.0)!
   sinatra (~> 1.3)
