@@ -66,6 +66,7 @@ class Repo
     FileUtils.cd(self.repo_path) {
       # compile
       Ruhoh.setup(:log_file => self.log_path, :enable_plugins => false)
+      Ruhoh.config.env = 'production'
       Ruhoh::DB.update_all
       Ruhoh::Compiler.compile(self.tmp_path)
 
