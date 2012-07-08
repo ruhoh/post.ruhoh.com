@@ -3,6 +3,7 @@ source :rubygems
 gem 'rake', "~> 0.9"
 gem 'rack', "~> 1.4"
 gem 'sinatra', "~> 1.3"
+gem 'sqlite3', "~> 1.3"
 gem "airbrake", "~> 3.0"
 gem 'omniauth'
 gem 'omniauth-github'
