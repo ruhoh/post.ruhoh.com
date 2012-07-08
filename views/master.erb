@@ -1,17 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>hello</title>
-    <link rel="stylesheet" href="/css/master.css" type="text/css" media="all" charset="utf-8">
+    <meta charset="utf-8">
+    <title>post.ruhoh.com</title>
+    <style type="text/css">
+      html, body {
+        padding:0; margin:0;
+        font: normal 16px/1.57em "Lucida Grande","Lucida Sans","Lucida Sans Unicode","Helvetica Neue",Arial,Helvetica,sans-serif
+      }
+      #signin {
+        text-align:center;
+      }
+      #map-wrapper, #signin {
+        width:500px; margin:auto; 
+        border:1px solid #ccc;
+        background:#eee;
+        padding:10px;
+        border-radius:5px;
+      }
+      #greeting {
+        text-align:center;
+        margin-bottom:10px;
+      }
+      #greeting img {
+        border:2px solid #eee;
+      }
+      #map-wrapper form {
+        text-align:center;
+        line-height:2em;
+      }
+      form span {
+        font-size:26px;
+        font-weight:bold;
+      }
+      input {
+        border:1px solid #ccc;
+        padding:5px;
+        font-size:20px;
+        width:400px;
+      }
+    </style>
   </head>
   
   <body>
-    <p>
-      <a href='/auth/github'>Sign in with GitHub</a>
-    </p>
-    
-<code><%= @data.to_json %></code>
-    
+    <%= @body %>
   </body>
   
 </html>  

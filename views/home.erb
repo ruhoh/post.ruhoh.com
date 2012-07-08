@@ -1,0 +1,14 @@
+<div id="greeting">
+  <img src="<%= @current_user.avatar_url %>&size=40">
+  <br>Hello, <strong><%= @current_user.nickname %></strong>
+</div>
+
+<div id="map-wrapper">
+  <form action="/" method="GET">
+    Please map
+    <br><span><%= @current_user.nickname %>.ruhoh.com </span>
+    <br>to
+    <br>http://<input type="text" value="<%= @mapping.domain %>" name="domain">/
+    <br><button type="submit" name="submit">Update</button>
+  </form>
+</div>
