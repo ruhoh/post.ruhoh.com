@@ -8,7 +8,11 @@ require 'erb'
 require 'json'
 require 'fileutils'
 
+require 'database'
 require 'repo'
+require 'mapping'
+require 'user'
+
 
 airbrake_config = File.join('config', 'airbrake.json')
 if File.exist?(airbrake_config)
@@ -28,8 +32,28 @@ use OmniAuth::Builder do
   provider :github, github_config["client_id"], github_config["secret"]
 end
 
+def ensure_user
+  return true if session[:user]
+  @body = erb :splash
+  halt(erb :master)
+end
+
+def current_user
+  session[:user]
+end
+
 get '/' do
-  'POST some GitHub data to me =('
+  ensure_user
+
+  @mapping = Mapping.new(current_user.nickname)
+  if params[:domain]
+    @mapping.domain = params[:domain].to_s.downcase
+    @mapping.save
+  end
+
+  @current_user = current_user
+  @body = erb :home
+  erb :master
 end
 
 post '/' do
@@ -41,8 +65,8 @@ end
 # Support both GET and POST for callbacks
 %w(get post).each do |method|
   send(method, "/auth/:provider/callback") do
-    auth = env['omniauth.auth'] # => OmniAuth::AuthHash
-    puts auth
+    session[:user] = User.new(env['omniauth.auth']) # => OmniAuth::AuthHash
+    redirect '/'
   end
 end
 
@@ -51,3 +75,7 @@ get '/auth/failure' do
   redirect '/'
 end
 
+get '/logout' do
+  session.clear
+  redirect '/'
+end
