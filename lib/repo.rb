@@ -77,6 +77,12 @@ class Repo
         return false
       end
       FileUtils.rm_r(self.tmp_path) if File.exist?(self.tmp_path)
+      
+      # symbolically link a mapped domain to the canonical directory
+      mapping = Mapping.new(self.owner_name)
+      if mapping && mapping.domain
+        FileUtils.symlink(self.target_path, File.join(TargetPath, mapping.domain))
+      end
     }
     
     self.log("SUCCESS: Blog compiled and deployed.")
