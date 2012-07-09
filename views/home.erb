@@ -3,7 +3,7 @@
   <br>Hello, <strong><%= @current_user.nickname %></strong>
 </div>
 
-<div id="map-wrapper">
+<div id="map-wrapper" class="box">
   <form action="/" method="GET">
     Please map
     <br><span><%= @current_user.nickname %>.ruhoh.com </span>
@@ -11,4 +11,22 @@
     <br>http://<input type="text" value="<%= @mapping.domain %>" name="domain">/
     <br><button type="submit" name="submit">Update</button>
   </form>
+</div>
+
+<div class="box" style="text-align:center">
+  <h3>Change Your Domain's DNS Records</h3>
+  <p>
+    In the interest of speed, I'm going to link to GitHub's wonderful 
+    tutorial for configuring your domain's DNS records.</a>
+    <br><a href="https://help.github.com/articles/setting-up-a-custom-domain-with-pages">setting-up-a-custom-domain</a>
+    <br><small>You only need to follow the directions after "Setting up DNS"</small>
+  </p>
+  <p style="color:red">Be sure to use the ruhoh specific values below:</p>
+
+  <h4>Toplevel Domain (TLD)</h4>
+  <label>A Record</label> <input type="text" value="50.116.20.239" READONLY>
+
+  
+  <h4>Subdomains</h4>
+  <label>CNAME</label> <input type="text" value="<%= @current_user.nickname %>.ruhoh.com" READONLY>
 </div>
