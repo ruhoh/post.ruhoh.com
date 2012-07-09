@@ -2,7 +2,7 @@ require 'sqlite3'
 class DB
   def self.db
     return @db if @db
-    @db = SQLite3::Database.new "database.db"
+    @db = SQLite3::Database.new "database/database.db"
     @db
   end
   
