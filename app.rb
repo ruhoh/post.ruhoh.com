@@ -48,7 +48,16 @@ get '/' do
   @mapping = Mapping.new(current_user.nickname)
   if params[:domain]
     @mapping.domain = params[:domain].to_s.downcase
-    @mapping.save
+    if @mapping.save
+      Repo.new({
+        "repository" => {
+          "name" => "#{current_user.nickname}.ruhoh.com", 
+          "owner" => {
+            "name" => current_user.nickname
+          }
+        }
+      }).try_deploy
+    end
   end
 
   @current_user = current_user
