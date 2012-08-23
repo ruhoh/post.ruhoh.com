@@ -65,8 +65,11 @@ class Repo
   def deploy
     FileUtils.cd(self.repo_path) {
       # compile
-      Ruhoh.setup(:log_file => self.log_path, :enable_plugins => false)
+      Ruhoh.setup(log_file: self.log_path)
       Ruhoh.config.env = 'production'
+      Ruhoh.setup_paths
+      Ruhoh.setup_urls
+      # no plugin support on post.ruhoh.com
       Ruhoh::DB.update_all
       Ruhoh::Compiler.compile(self.tmp_path)
 
