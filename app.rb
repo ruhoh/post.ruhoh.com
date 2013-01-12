@@ -61,6 +61,12 @@ get '/' do
   end
 
   @current_user = current_user
+  full_name = "#{current_user.nickname}/#{current_user.nickname}.ruhoh.com"
+  @repos = [{
+    "html_url" => "http://github.com/#{full_name}",
+    "full_name" => full_name
+  }]
+
   @body = erb :home
   erb :master
 end

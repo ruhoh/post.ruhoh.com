@@ -2,46 +2,69 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>post.ruhoh.com</title>
+    <title>Free Static Blog Hosting | post.ruhoh.com</title>
     <style type="text/css">
       html, body {
         padding:0; margin:0;
-        font: normal 16px/1.57em "Lucida Grande","Lucida Sans","Lucida Sans Unicode","Helvetica Neue",Arial,Helvetica,sans-serif
+        font: normal 14px/1.57em "Lucida Grande","Lucida Sans","Lucida Sans Unicode","Helvetica Neue",Arial,Helvetica,sans-serif;
+        color:#4B5640;
+        height:100%;
       }
+      input {
+        border:0;
+        border-right:5px solid #DEA37A;
+        padding:5px;
+        font-size:20px;
+        width:50%;
+        color:#D54C4A;
+        background-color:#FCF9CE;
+      }
+      .warn {color:#BD3737}
+
       #signin {
         text-align:center;
       }
-      #map-wrapper {
-        margin-bottom:10px;
-      }
-      .box {
-        width:500px;
-        margin:auto; 
-        border:1px solid #ccc;
-        background:#eee;
-        padding:10px;
-        border-radius:5px;
-      }
+      
       #greeting {
-        text-align:center;
-        margin-bottom:10px;
+        position:absolute;
+        padding-right:20px;
+        background-color:#4B5640;
+        color:#FCF9CE;
+        font-size:0.9em;
       }
       #greeting img {
-        border:2px solid #eee;
+        border-right:1px solid #FCF9CE;
+        margin-right:20px;
+        vertical-align:middle
       }
-      #map-wrapper form {
+
+      #instructions {
+        background:#C4E0A6;
+        margin-bottom:10px;
+        padding:10px;
+        color:#4B5640;
         text-align:center;
-        line-height:2em;
       }
-      form span {
-        font-size:26px;
-        font-weight:bold;
+
+      table#repositories {
+        width:100%;
+        border-collapse:collapse;
       }
-      input {
-        border:1px solid #ccc;
-        padding:5px;
-        font-size:20px;
-        width:400px;
+      #repositories tr th{
+        text-align:left;
+        background-color:#FFF;
+        padding:7px;
+        font-size:1.2em;
+      }
+      #repositories td {
+        padding:7px;
+        border-bottom:1px solid #C4E0A6;
+        background-color:#FFF;
+      }
+      #repositories td.repository {
+        width:33%;
+      }
+      #repositories td.domain {
       }
     </style>
   </head>
