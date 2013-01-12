@@ -1,5 +1,5 @@
 require 'ruhoh'
-require 'ruhoh/compiler'
+require 'ruhoh/programs/compile'
 
 class Repo
   attr_reader :owner_name, :name
@@ -64,14 +64,13 @@ class Repo
   
   def deploy
     FileUtils.cd(self.repo_path) {
-      # compile
-      Ruhoh.setup(log_file: self.log_path)
-      Ruhoh.config.env = 'production'
-      Ruhoh.setup_paths
-      Ruhoh.setup_urls
-      # no plugin support on post.ruhoh.com
-      Ruhoh::DB.update_all
-      Ruhoh::Compiler.compile(self.tmp_path)
+      # compile ruhoh 2.0
+      ruhoh = Ruhoh.new
+      ruhoh.setup(log_file: log_path)
+      ruhoh.env = 'production'
+      ruhoh.setup_paths
+      ruhoh.paths.compiled = tmp_path
+      ruhoh.compile
 
       # move to www directory
       FileUtils.mkdir_p self.target_path
