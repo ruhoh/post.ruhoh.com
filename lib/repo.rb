@@ -48,20 +48,6 @@ class Repo
     }
   end
   
-  # git clone the repository from GitHub even if we have an existing repo
-  # as it may be out of sync with the origin.
-  def clone
-    if FileTest.directory? self.repo_path
-      fresh_clone = "#{self.repo_path}-fresh"
-      return false unless system('git', 'clone', self.git_url, fresh_clone)
-    
-      FileUtils.rm_r self.repo_path
-      FileUtils.mv fresh_clone, self.repo_path
-    else
-      return system('git', 'clone', self.git_url, self.repo_path)
-    end
-  end
-  
   def deploy
     FileUtils.cd(self.repo_path) {
       # compile ruhoh 2.0
@@ -94,15 +80,6 @@ class Repo
   # Most typically due to invalid blog configuration.
   rescue SystemExit
     false
-  end
-  
-  def log(message)
-    FileUtils.mkdir_p File.dirname(self.log_path)
-    File.open(self.log_path, "a") { |f|
-      f.puts '---'
-      f.puts Time.now.utc
-      f.puts message
-    }
   end
   
   # Currently all repos from a given GitHub user will be attached to only the user's username.
@@ -144,16 +121,41 @@ class Repo
     File.join(LogPath, "#{self.site_name}.txt")
   end
   
+  def log(message)
+    FileUtils.mkdir_p File.dirname(self.log_path)
+    File.open(self.log_path, "a") { |f|
+      f.puts '---'
+      f.puts Time.now.utc
+      f.puts message
+    }
+  end
+
+  protected
+
   def parse_payload(github_payload)
     @owner_name = github_payload['repository']['owner']['name'] rescue nil
     @name       = github_payload['repository']['name'] rescue nil
   end
-  
+
+  # git clone the repository from GitHub even if we have an existing repo
+  # as it may be out of sync with the origin.
+  def clone
+    if FileTest.directory? self.repo_path
+      fresh_clone = "#{self.repo_path}-fresh"
+      return false unless system('git', 'clone', self.git_url, fresh_clone)
+    
+      FileUtils.rm_r self.repo_path
+      FileUtils.mv fresh_clone, self.repo_path
+    else
+      return system('git', 'clone', self.git_url, self.repo_path)
+    end
+  end
+
   # Do not trust user submitted input tee.hee
   def valid?
     return false unless @owner_name =~ OwnerRegex
     return false unless @name =~ NameRegex
     true
   end
-  
-end #Repo
+
+end
