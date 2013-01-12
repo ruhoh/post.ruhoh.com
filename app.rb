@@ -8,6 +8,8 @@ require 'erb'
 require 'json'
 require 'fileutils'
 
+require 'octokit'
+
 require 'database'
 require 'repo'
 require 'mapping'

@@ -10,3 +10,4 @@ gem 'omniauth-github'
 gem 'ruhoh', '2.0.alpha', :git => 'https://github.com/ruhoh/ruhoh.rb.git'
 #gem 'ruhoh', :path => '/Users/jade/Dropbox/gems/ruhoh'
 gem 'psych', "1.3.4"
+gem 'octokit'
