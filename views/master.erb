@@ -20,7 +20,10 @@
         color:#D54C4A;
         background-color:#FCF9CE;
       }
-      .warn {color:#BD3737}
+      input.default {
+        color:#777;
+      }
+      .warn {color:#BD3737; font-weight:bold;}
 
       #signin {
         text-align:center;
@@ -39,14 +42,20 @@
         vertical-align:middle
       }
 
-      #instructions {
+      #instructions, #signin {
         background:#C4E0A6;
         margin-bottom:10px;
         padding:10px;
         color:#4B5640;
-        text-align:center;
       }
-
+      #instructions .inner {
+        width: 70%;
+        margin:auto;
+      }
+      #instructions input {
+        width:80%;
+      }
+      
       table#repositories {
         width:100%;
         border-collapse:collapse;
@@ -67,11 +76,20 @@
       }
       #repositories td.domain {
       }
+      
+      #footer{
+        position:fixed;
+        bottom:0;
+        width:100%;
+        border-bottom: 5px solid #D54C4A;
+      }
     </style>
   </head>
   
   <body>
     <%= @body %>
+    
+    <div id="footer"></div>
   </body>
   
 </html>  

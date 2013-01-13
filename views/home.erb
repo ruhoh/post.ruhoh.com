@@ -4,22 +4,25 @@
 </div>
 
 <div id="instructions">
-  <h3>For Each Domain You Set You Must Change its DNS Records</h3>
-  <p>
-    Refer to GitHub's wonderful tutorial for configuring your domain's DNS records.</a>
-    <br><a href="https://help.github.com/articles/setting-up-a-custom-domain-with-pages">setting-up-a-custom-domain</a>
-    <br><small>You only need to follow the directions after "Setting up DNS"</small>
-  </p>
-  <p class="warn">Use the ruhoh specific values below:</p>
-
-  <h4>For Toplevel Domains (TLD) (ex: http://mysite.com)</h4>
-  <label>A Record</label> <input type="text" value="50.116.20.239" READONLY>
-
+  <div class="inner">
+    <div style="float:left; width:45%">
+      <h3>Updating DNS Records for Custom Domains:</h3>
+      Refer to GitHub's wonderful tutorial for configuring your domain's DNS records.</a>
+      <a href="https://help.github.com/articles/setting-up-a-custom-domain-with-pages">setting-up-a-custom-domain</a>
+      <br><small>You only need to follow the directions after "Setting up DNS"</small>
+      <p class="warn">Use the ruhoh specific values &rarr;</p>
+    </div>
   
-  <h4>For Subdomains (ex: http://blog.mysite.com)</h4>
-  <label>CNAME</label> <input type="text" value="<%= @current_user.nickname %>.ruhoh.com" READONLY>
+    <div style="float:right; width:45%">
+      <h4>For Toplevel Domains (TLD) (ex: http://mysite.com) add:</h4>
+      <label>A Record</label> <input type="text" value="50.116.20.239" READONLY>
+  
+      <h4>For Subdomains (ex: http://blog.mysite.com) add: </h4>
+      <label>CNAME</label> <input type="text" value="<%= @current_user.nickname %>.ruhoh.com" READONLY>
+    </div>
+  </div>
+  <div style="clear:both;">&nbsp;</div>
 </div>
-
 
 <table id="repositories">
   <tr>
