@@ -2,7 +2,7 @@ require 'ruhoh'
 require 'ruhoh/programs/compile'
 
 class Repo
-  attr_accessor :owner_name, :name
+  attr_accessor :owner_name, :name, :domain
 
   # These regex's are supposed to follow GitHub's allowed naming strategy.
 
@@ -62,7 +62,6 @@ class Repo
       ruhoh.paths.compiled = tmp_path
       ruhoh.compile
 
-      # move to www directory
       FileUtils.mkdir_p target_path
       unless system('rsync', '-az', '--stats', '--delete', "#{tmp_path}/.", target_path)
         log("ERROR: Compiled blog failed to rysnc to www directory. This is a system error and has been reported!")
@@ -70,11 +69,7 @@ class Repo
       end
       FileUtils.rm_r(tmp_path) if File.exist?(tmp_path)
       
-      # symbolically link a mapped domain to the canonical directory
-      mapping = Mapping.new(owner_name)
-      if mapping && mapping.domain
-        FileUtils.symlink(target_path, File.join(TargetPath, mapping.domain))
-      end
+      handle_domain_mapping
     }
     
     log("SUCCESS: Blog compiled and deployed.")
@@ -163,6 +158,12 @@ class Repo
     return false unless @owner_name =~ OwnerRegex
     return false unless @name =~ NameRegex
     true
+  end
+
+  # symbolically link a mapped domain to the canonical directory
+  def handle_domain_mapping
+    return false unless @custom_domain
+    FileUtils.symlink(target_path, File.join(TargetPath, @custom_domain))
   end
 
 end
