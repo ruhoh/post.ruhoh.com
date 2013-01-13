@@ -12,3 +12,7 @@ gem 'ruhoh', '2.0.alpha', :git => 'https://github.com/ruhoh/ruhoh.rb.git'
 gem 'psych', "1.3.4"
 gem 'octokit'
 gem "parse-ruby-client", "~> 0.1.10"
+
+group :development do
+  gem 'shotgun'
+end
