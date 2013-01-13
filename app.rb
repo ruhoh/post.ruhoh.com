@@ -16,7 +16,6 @@ require 'repo'
 require 'mapping'
 require 'user'
 
-
 airbrake_config = File.join('config', 'airbrake.json')
 if File.exist?(airbrake_config)
   require 'airbrake'
@@ -53,39 +52,50 @@ def current_user
   session[:user]
 end
 
+# Homepage - list repos and websites
 get '/' do
   ensure_user
-
-  @mapping = Mapping.new(current_user.nickname)
-  if params[:domain]
-    @mapping.domain = params[:domain].to_s.downcase
-    if @mapping.save
-      Repo.new({
-        "repository" => {
-          "name" => "#{current_user.nickname}.ruhoh.com", 
-          "owner" => {
-            "name" => current_user.nickname
-          }
-        }
-      }).try_deploy
-    end
-  end
-
+  
   @current_user = current_user
-  full_name = "#{current_user.nickname}/#{current_user.nickname}.ruhoh.com"
-  @repos = [{
-    "html_url" => "http://github.com/#{full_name}",
-    "full_name" => full_name
-  }]
-
+  @repos = Octokit.repositories(@current_user.nickname)
+  @repo_dictionary = Repo.dictionary({"user" => current_user.nickname })
+  
   @body = erb :home
   erb :master
 end
 
+# Service provider sends POST webhook payload here.
 post '/' do
   payload = JSON.parse(params['payload'])
-  repo = Repo.new(payload)
+  repo = Repo.find_or_build_with_payload(payload)
   repo.try_deploy
+end
+
+# Update domain mapping on repo.
+post '/repos/:name' do
+  ensure_user
+  halt "No domain sent" unless params[:domain]
+  repo = Repo.find_or_build({
+    "user" => current_user.nickname,
+    "name" => params[:name]
+  })
+  repo.custom_domain = params[:domain]
+  
+  repo.save && repo.try_deploy
+  
+  redirect "/"
+end
+
+# Trigger compile update on repo.
+post '/repos/:name/compile' do
+  ensure_user
+  repo = Repo.find_or_build({
+    "user" => current_user.nickname,
+    "name" => params[:name]
+  })
+  repo.try_deploy
+
+  redirect '/'
 end
 
 # Support both GET and POST for callbacks

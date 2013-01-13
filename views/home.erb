@@ -28,17 +28,27 @@
   <tr>
     <th>My repository...</th>
     <th>maps to...</th>
+    <th></th>
   </tr>
 <% @repos.each do |repo| %>
-  <tr>
+  <tr data-id="<%= @repo_dictionary[repo['name']].id rescue "" %>">
     <td class="repository">
       <a href="<%= repo['html_url'] %>" target="_blank"><%= repo['full_name'] %></a>
     </td>
     <td class="domain">
-      <form action="/" method="GET">
-        <input type="hidden" name="repo" value="<%= repo['full_name'] %>">
-        <span>http://</span><input type="text" value="<%= @mapping.domain %>" name="domain">
+      <form action="/repos/<%= repo['name'] %>" method="POST">
+        <span>http://</span>
+        <% if @repo_dictionary[repo['name']] %>
+          <input type="text" class="custom" value="<%= @repo_dictionary[repo['name']]['domain'] %>" name="domain">
+        <% else %>
+          <input type="text" class="default" value="<%= repo['full_name'].gsub('/', '-').gsub('.', '-') %>.ruhoh.com" name="domain">
+        <% end %>
         <button type="submit" name="submit">Update</button>
+      </form>
+    </td>
+    <td class="update">
+      <form action="/repos/<%= repo['name'] %>/compile" method="POST">
+        <button type="submit" name="submit">compile</button>
       </form>
     </td>
   </tr>
