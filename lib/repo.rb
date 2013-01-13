@@ -2,8 +2,8 @@ require 'ruhoh'
 require 'ruhoh/programs/compile'
 
 class Repo
-  attr_reader :owner_name, :name
-  
+  attr_accessor :owner_name, :name
+
   # These regex's are supposed to follow GitHub's allowed naming strategy.
 
   # alphanumeric + dash but cannot start with dash.
@@ -15,14 +15,18 @@ class Repo
   RepoPath    = File.expand_path(File.join('~', 'repos'))
   TargetPath  = File.expand_path(File.join('~', 'www'))
   LogPath     = File.expand_path(File.join('~', 'user-logs'))
-
-  def initialize(github_payload)
-    self.parse_payload(github_payload)
+  
+  # @param[Hash] payload the webhook provider payload object.
+  def initialize(payload=nil)
+    # this check is ad-hoc and can obviously be gamed.
+    if (payload['git_url'].include?('github.com') rescue false)
+      parse_github(payload)
+    end
   end
   
   # Try full deploy
   def try_deploy
-    return self.log("ERROR: Invalid GitHub Payload") unless self.valid?
+    return self.log("ERROR: Invalid #{@provider} Payload") unless self.valid?
     return self.log("ERROR: Could not update Git repository") unless self.update
     self.deploy
   end
@@ -131,10 +135,13 @@ class Repo
   end
 
   protected
-
-  def parse_payload(github_payload)
-    @owner_name = github_payload['repository']['owner']['name'] rescue nil
-    @name       = github_payload['repository']['name'] rescue nil
+  
+  Providers = ["github"]
+  
+  def parse_github(payload)
+    @provider = "github"
+    @owner_name = payload['repository']['owner']['name'] rescue nil
+    @name       = payload['repository']['name'] rescue nil
   end
 
   # git clone the repository from GitHub even if we have an existing repo
