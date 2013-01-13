@@ -2,7 +2,7 @@ require 'ruhoh'
 require 'ruhoh/programs/compile'
 
 class Repo
-  attr_accessor :owner_name, :name, :domain
+  attr_accessor :user, :name, :custom_domain, :provider
 
   # These regex's are supposed to follow GitHub's allowed naming strategy.
 
@@ -16,12 +16,65 @@ class Repo
   TargetPath  = File.expand_path(File.join('~', 'www'))
   LogPath     = File.expand_path(File.join('~', 'user-logs'))
   
-  # @param[Hash] payload the webhook provider payload object.
-  def initialize(payload=nil)
+  def initialize
+    @_frozen_snapshot = {}
+  end
+  
+  def self.all(constraints)
+    r = Parse::Query.new("Repo")
+    r.where = constraints
+    unless r.where.key?("user")
+      raise "Query must be scoped to a user." 
+    end
+    r.get
+  end
+  
+  def self.dictionary(constraints)
+    dict = {}
+    repos = all(constraints)
+    repos.each { |r| dict[r["name"]] = r }
+    dict
+  end
+  
+  # Find or build a repo instance with the provided constraint attributes.
+  # Internally queries the persistance storage (currently Parse).
+  # @_persistor object is stored to avoid duplicate database entries.
+  #
+  # @param[Hash] constraints
+  #
+  def self.find_or_build(constraints)
+    obj = all(constraints)[0] || Parse::Object.new("Repo", constraints)
+    repo = new
+    repo.store(obj)
+    repo.user = obj['user']
+    repo.name = obj['name']
+    repo.custom_domain = obj['domain']
+    repo
+  end
+  
+  # Find or build a repo instance from an incoming payload.
+  # Payload providers are handled internally.
+  # @param[Hash] payload from a service provider.
+  def self.find_or_build_with_payload(payload)
     # this check is ad-hoc and can obviously be gamed.
     if (payload['git_url'].include?('github.com') rescue false)
-      parse_github(payload)
+      load_from_github_payload(payload)
+    else
+      log("Payload does not appear to be from GitHub")
     end
+  end
+  
+  def save
+    result = persistor.save
+
+    # onchange callbacks (probably a better way to do this)
+    
+    if @_frozen_snapshot['domain'] && (persistor['domain'] != @_frozen_snapshot['domain'])
+      # delete the old symlink
+      FileUtils.rm File.join(TargetPath, @_frozen_snapshot['domain'])
+    end
+    
+    result
   end
   
   # Try full deploy
@@ -81,25 +134,26 @@ class Repo
     false
   end
   
-  # Currently all repos from a given GitHub user will be attached to only the user's username.
-  # In other words a user only gets one static website in ruhoh for now:
-  # username.ruhoh.com
-  # NOTE: All repos that post to the users endpoint will update the same site for now:
-  def site_name
-    "#{@owner_name}.ruhoh.com".downcase
+  #
+  def domain
+    if @name.downcase == "#{@user}.ruhoh.com".downcase
+      "#{@user}.ruhoh.com".downcase
+    else
+      "#{full_name}.ruhoh.com".downcase
+    end
   end
 
   # Full name is the repository owner + repository name
   # This will uniquely define all repos on GitHub
   def full_name
-    "#{@owner_name}-#{@name}"
+    "#{@user}-#{@name}"
   end
   
   # The git_url is the full name to the repository.
   # Users are encouraged to set the webhook for the repo: username.ruhoh.com
   # but really any repo that has the webhook will run.
   def git_url
-    "git://github.com/#{@owner_name}/#{@name}.git"
+    "git://github.com/#{@user}/#{@name}.git"
   end
   
   # This repos git directory
@@ -108,16 +162,16 @@ class Repo
   end
   
   def tmp_path
-    File.join(TmpPath, site_name)
+    File.join(TmpPath, domain)
   end
   
   # Where this repo will compile its website to
   def target_path
-    File.join(TargetPath, site_name)
+    File.join(TargetPath, domain)
   end
   
   def log_path
-    File.join(LogPath, "#{site_name}.txt")
+    File.join(LogPath, "#{domain}.txt")
   end
   
   def log(message)
@@ -127,17 +181,15 @@ class Repo
       f.puts Time.now.utc
       f.puts message
     }
+    abort(message)
+  end
+
+  def store(obj)
+    @_persistor = obj
+    @_frozen_snapshot = obj.dup.freeze
   end
 
   protected
-  
-  Providers = ["github"]
-  
-  def parse_github(payload)
-    @provider = "github"
-    @owner_name = payload['repository']['owner']['name'] rescue nil
-    @name       = payload['repository']['name'] rescue nil
-  end
 
   # git clone the repository from GitHub even if we have an existing repo
   # as it may be out of sync with the origin.
@@ -155,7 +207,7 @@ class Repo
 
   # Do not trust user submitted input tee.hee
   def valid?
-    return false unless @owner_name =~ OwnerRegex
+    return false unless @user =~ OwnerRegex
     return false unless @name =~ NameRegex
     true
   end
@@ -164,6 +216,32 @@ class Repo
   def handle_domain_mapping
     return false unless @custom_domain
     FileUtils.symlink(target_path, File.join(TargetPath, @custom_domain))
+  end
+  
+  # the internal persistance object
+  # Kind of messy but eh =/
+  def persistor
+    @_persistor ||= Parse::Object.new("Repo")
+    @_persistor["user"] = user
+    @_persistor["name"] = name
+    @_persistor["domain"] = custom_domain
+    @_persistor
+  end
+  
+  # Extract relevant information from GitHub payload
+  # and normalize it for instantiated repo object.
+  def self.load_from_github_payload(payload)
+    user = payload['repository']['owner']['name'] rescue nil
+    name = payload['repository']['name'] rescue nil
+    log("User not found") unless user
+    log("Name not found") unless name
+
+    repo = find_or_build({
+      "user" => user,
+      "name" => name,
+    })
+    repo.provider = "github"
+    repo
   end
 
 end
