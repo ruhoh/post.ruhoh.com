@@ -26,9 +26,9 @@ class Repo
   
   # Try full deploy
   def try_deploy
-    return self.log("ERROR: Invalid #{@provider} Payload") unless self.valid?
-    return self.log("ERROR: Could not update Git repository") unless self.update
-    self.deploy
+    return log("ERROR: Invalid #{@provider} Payload") unless valid?
+    return log("ERROR: Could not update Git repository") unless update
+    deploy
   end
 
   # Update the repository from origin (GitHub).
@@ -39,13 +39,13 @@ class Repo
   #   merge-base will return the common ancestor sha1 of the two branches.
   #   no ancestor means the branches are not mergeable.
   def update
-    return self.clone unless File.exist? File.join(self.repo_path, '.git')
+    return clone unless File.exist? File.join(repo_path, '.git')
 
-    FileUtils.cd(self.repo_path) {
+    FileUtils.cd(repo_path) {
       system('git', 'fetch', 'origin')
 
       if `git merge-base origin/master master`.empty?
-        return self.clone 
+        return clone 
       else
         return system('git', 'reset', '--hard', 'origin/master')
       end
@@ -53,7 +53,7 @@ class Repo
   end
   
   def deploy
-    FileUtils.cd(self.repo_path) {
+    FileUtils.cd(repo_path) {
       # compile ruhoh 2.0
       ruhoh = Ruhoh.new
       ruhoh.setup(log_file: log_path)
@@ -63,21 +63,21 @@ class Repo
       ruhoh.compile
 
       # move to www directory
-      FileUtils.mkdir_p self.target_path
-      unless system('rsync', '-az', '--stats', '--delete', "#{self.tmp_path}/.", self.target_path)
-        self.log("ERROR: Compiled blog failed to rysnc to www directory. This is a system error and has been reported!")
+      FileUtils.mkdir_p target_path
+      unless system('rsync', '-az', '--stats', '--delete', "#{tmp_path}/.", target_path)
+        log("ERROR: Compiled blog failed to rysnc to www directory. This is a system error and has been reported!")
         return false
       end
-      FileUtils.rm_r(self.tmp_path) if File.exist?(self.tmp_path)
+      FileUtils.rm_r(tmp_path) if File.exist?(tmp_path)
       
       # symbolically link a mapped domain to the canonical directory
-      mapping = Mapping.new(self.owner_name)
+      mapping = Mapping.new(owner_name)
       if mapping && mapping.domain
-        FileUtils.symlink(self.target_path, File.join(TargetPath, mapping.domain))
+        FileUtils.symlink(target_path, File.join(TargetPath, mapping.domain))
       end
     }
     
-    self.log("SUCCESS: Blog compiled and deployed.")
+    log("SUCCESS: Blog compiled and deployed.")
     true
     
   # This is a standard exit from Ruhoh.log.error which has already been addressed.
@@ -109,25 +109,25 @@ class Repo
   
   # This repos git directory
   def repo_path
-    File.join(RepoPath, self.full_name)
+    File.join(RepoPath, full_name)
   end
   
   def tmp_path
-    File.join(TmpPath, self.site_name)
+    File.join(TmpPath, site_name)
   end
   
   # Where this repo will compile its website to
   def target_path
-    File.join(TargetPath, self.site_name)
+    File.join(TargetPath, site_name)
   end
   
   def log_path
-    File.join(LogPath, "#{self.site_name}.txt")
+    File.join(LogPath, "#{site_name}.txt")
   end
   
   def log(message)
-    FileUtils.mkdir_p File.dirname(self.log_path)
-    File.open(self.log_path, "a") { |f|
+    FileUtils.mkdir_p File.dirname(log_path)
+    File.open(log_path, "a") { |f|
       f.puts '---'
       f.puts Time.now.utc
       f.puts message
@@ -147,14 +147,14 @@ class Repo
   # git clone the repository from GitHub even if we have an existing repo
   # as it may be out of sync with the origin.
   def clone
-    if FileTest.directory? self.repo_path
-      fresh_clone = "#{self.repo_path}-fresh"
-      return false unless system('git', 'clone', self.git_url, fresh_clone)
+    if FileTest.directory? repo_path
+      fresh_clone = "#{repo_path}-fresh"
+      return false unless system('git', 'clone', git_url, fresh_clone)
     
-      FileUtils.rm_r self.repo_path
-      FileUtils.mv fresh_clone, self.repo_path
+      FileUtils.rm_r repo_path
+      FileUtils.mv fresh_clone, repo_path
     else
-      return system('git', 'clone', self.git_url, self.repo_path)
+      return system('git', 'clone', git_url, repo_path)
     end
   end
 
