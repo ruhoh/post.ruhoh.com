@@ -26,7 +26,9 @@ if File.exist?(airbrake_config)
   enable :raise_errors
 end
   
-use Rack::Session::Cookie
+secret = File.join('config', 'secret.json')
+secret = File.open(secret) {|f| JSON.parse(f.read) }
+use Rack::Session::Cookie, secret: secret["key"]
 use OmniAuth::Builder do
   github_config = File.join('config', 'github.json')
   next unless File.exist?(github_config)
