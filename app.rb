@@ -8,6 +8,7 @@ require 'erb'
 require 'json'
 require 'fileutils'
 
+require 'parse-ruby-client'
 require 'octokit'
 
 require 'database'
@@ -33,6 +34,12 @@ use OmniAuth::Builder do
   github_config = File.open(github_config) {|f| JSON.parse(f.read) }
   provider :github, github_config["client_id"], github_config["secret"]
 end
+
+parse = File.join('config', 'parse.json')
+parse = File.open(parse) {|f| JSON.parse(f.read) }
+Parse.init application_id: parse["application_id"],
+           api_key: parse["api_key"]
+
 
 def ensure_user
   return true if session[:user]
