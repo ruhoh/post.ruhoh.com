@@ -107,12 +107,7 @@ class Repo
 
     FileUtils.cd(repo_path) {
       system('git', 'fetch', 'origin')
-
-      if `git merge-base origin/#{@branch} #{@branch}`.empty?
-        return clone 
-      else
-        return system('git', 'reset', '--hard', "origin/#{@branch}")
-      end
+      return system('git', 'reset', '--hard', "origin/#{@branch}")
     }
   end
   
