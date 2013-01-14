@@ -23,9 +23,6 @@ class Repo
   def self.all(constraints)
     r = Parse::Query.new("Repo")
     r.where = constraints
-    unless r.where.key?("user")
-      raise "Query must be scoped to a user." 
-    end
     r.get
   end
   
