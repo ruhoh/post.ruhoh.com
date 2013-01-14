@@ -224,7 +224,10 @@ class Repo
   # symbolically link a mapped domain to the canonical directory
   def handle_domain_mapping
     return false unless @custom_domain
-    FileUtils.symlink(target_path, File.join(TargetPath, @custom_domain))
+    custom_path = File.join(TargetPath, @custom_domain)
+    return false if target_path == custom_path
+    
+    FileUtils.symlink(target_path, custom_path)
   end
   
   # the internal persistance object
