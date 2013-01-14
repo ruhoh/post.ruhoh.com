@@ -79,7 +79,8 @@ class Repo
     
     if @_frozen_snapshot['domain'] && (persistor['domain'] != @_frozen_snapshot['domain'])
       # delete the old symlink
-      FileUtils.rm File.join(TargetPath, @_frozen_snapshot['domain'])
+      old_symlink = File.join(TargetPath, @_frozen_snapshot['domain'])
+      FileUtils.rm old_symlink if File.symlink?(old_symlink)
     end
     
     result
