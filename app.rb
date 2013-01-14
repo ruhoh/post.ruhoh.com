@@ -8,6 +8,7 @@ require 'erb'
 require 'json'
 require 'fileutils'
 
+require 'rack-flash'
 require 'parse-ruby-client'
 require 'octokit'
 
@@ -41,6 +42,7 @@ parse = File.open(parse) {|f| JSON.parse(f.read) }
 Parse.init application_id: parse["application_id"],
            api_key: parse["api_key"]
 
+use Rack::Flash
 
 def ensure_user
   return true if session[:user]
