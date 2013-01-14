@@ -65,6 +65,14 @@ class Repo
   end
   
   def save
+    # Validate the domain:
+    if persistor['domain'] && persistor['domain'] =~ /.ruhoh.com$/i
+      unless persistor['domain'].downcase.start_with?(persistor["user"].downcase)
+        @error = "ruhoh based domains must start with your username"
+        return false
+      end
+    end
+    
     result = persistor.save
 
     # onchange callbacks (probably a better way to do this)
