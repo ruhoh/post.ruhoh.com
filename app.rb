@@ -95,7 +95,12 @@ post '/repos/:name/compile' do
     "user" => current_user.nickname,
     "name" => params[:name]
   })
-  repo.try_deploy
+  
+  if repo.try_deploy
+    flash[:success] = "Successfully compiled!"
+  else
+    flash[:error] = "There was an error. Please check the logs."
+  end
 
   redirect '/'
 end
