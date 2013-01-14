@@ -77,13 +77,37 @@ end
 post '/repos/:name' do
   ensure_user
   halt "No domain sent" unless params[:domain]
-  repo = Repo.find_or_build({
-    "user" => current_user.nickname,
-    "name" => params[:name]
-  })
-  repo.custom_domain = params[:domain]
+
+  record = Repo.all({"domain" => params[:domain]})[0]
+
+  if record # Domain already exists.
+    if record['user'] == current_user.nickname
+      if record['name'] == params[:name]
+        flash[:notice] = "Saved but not changed."
+        redirect '/' # no change.
+      else
+        flash[:error] = "Your repo '#{record['name']}' already has this domain." +
+          " Edit this first then try again."
+      end
+    else
+       flash[:error] = "Another user has configured '#{params[:domain]}'." +
+        " If you own '#{params[:domain]}' please email me to resolve:"+
+        " <a href='mailto:plusjade@gmail.com'>plusjade@gmail.com</a>."
+    end
+  else
+    repo = Repo.find_or_build({
+      "user" => current_user.nickname,
+      "name" => params[:name]
+    })
+    repo.custom_domain = params[:domain]
   
-  repo.save && repo.try_deploy
+    if repo.save
+      flash[:success] = "Domain updated and deployed!"
+      repo.try_deploy
+    else
+      flash[:error] = repo.error
+    end
+  end
   
   redirect "/"
 end
