@@ -1,6 +1,6 @@
 require 'net/http'
 require 'json'
-
+require 'rspec/core/rake_task'
 
 task :post do 
   env   = ENV['env'] || 'development'
@@ -16,3 +16,7 @@ task :post do
   response
 end  
 
+
+RSpec::Core::RakeTask.new('spec')
+desc "Run tests"
+task :default => :spec
