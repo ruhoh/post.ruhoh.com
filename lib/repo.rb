@@ -57,8 +57,9 @@ class Repo
   # @param[Hash] payload from a service provider.
   def self.find_or_build_with_payload(payload)
     # this check is ad-hoc and can obviously be gamed.
-    if (payload['git_url'].include?('github.com') rescue false)
-      load_from_github_payload(payload)
+    url = payload['repository']['url'].downcase rescue ""
+    if url.include?('github.com') && repo = load_from_github_payload(payload)
+      repo
     else
       message = "Payload does not appear to be from GitHub"
       abort(message)
@@ -92,6 +93,9 @@ class Repo
     return log("ERROR: Invalid #{@provider} Payload") unless valid?
     return log("ERROR: Could not update Git repository") unless update
     deploy
+  rescue Exception => e
+    @error = e
+    false
   end
 
   # Update the repository from origin (GitHub).
@@ -246,8 +250,10 @@ class Repo
     @_persistor
   end
   
+  # https://help.github.com/articles/post-receive-hooks
   # Extract relevant information from GitHub payload
   # and normalize it for instantiated repo object.
+  # @return[repo instance | false]
   def self.load_from_github_payload(payload)
     user = payload['repository']['owner']['name'] rescue nil
     name = payload['repository']['name'] rescue nil
