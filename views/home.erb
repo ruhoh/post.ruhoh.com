@@ -24,6 +24,35 @@
   <div style="clear:both;">&nbsp;</div>
 </div>
 
+<%
+type = nil
+message = nil
+[:error, :notice, :success].each { |key|
+  if flash.has?(key)
+    type = key
+    message = flash[key]
+    break
+  end
+}
+%>
+<div id='status-bar'>
+  <div class='container alert' id='submitting' style='display:none'>
+    <strong>Submitting</strong>
+  </div>
+  <div class='responding container alert' style='display:none'></div>
+<% if message %>
+  <div class="responding container active alert alert-<%= type %>">
+    <span><%= message %></span>
+  </div>
+  <script>
+    $("div.responding.active").click(function(){
+      console.log("meep")
+      $(this).fadeOut();
+    })
+  </script>
+<% end %>
+</div>
+
 <table id="repositories">
   <tr>
     <th>My repository...</th>
