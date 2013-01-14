@@ -70,7 +70,8 @@ end
 post '/' do
   payload = JSON.parse(params['payload'])
   repo = Repo.find_or_build_with_payload(payload)
-  repo.try_deploy
+
+  repo.try_deploy ? 204 : 400
 end
 
 # Update domain mapping on repo.
