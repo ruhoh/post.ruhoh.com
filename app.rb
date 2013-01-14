@@ -102,8 +102,11 @@ post '/repos/:name' do
     repo.custom_domain = params[:domain]
   
     if repo.save
-      flash[:success] = "Domain updated and deployed!"
-      repo.try_deploy
+      if repo.try_deploy
+        flash[:error] = "Saved but: #{repo.error}"
+      else
+        flash[:success] = "Domain updated and compiled."
+      end
     else
       flash[:error] = repo.error
     end
@@ -123,7 +126,7 @@ post '/repos/:name/compile' do
   if repo.try_deploy
     flash[:success] = "Successfully compiled!"
   else
-    flash[:error] = "There was an error. Please check the logs."
+    flash[:error] = repo.error
   end
 
   redirect '/'

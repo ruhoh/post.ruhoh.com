@@ -19,7 +19,7 @@ class Repo
   
   def initialize
     @_frozen_snapshot = {}
-    @error = "There was a problem saving the repo."
+    @error = "There was a problem!"
     @branch = 'master'
   end
   
@@ -102,6 +102,8 @@ class Repo
   # Notes: 
   #   merge-base will return the common ancestor sha1 of the two branches.
   #   no ancestor means the branches are not mergeable.
+  #
+  # @return[Boolean] was the update successful?
   def update
     return clone unless File.exist? File.join(repo_path, '.git')
 
@@ -137,6 +139,11 @@ class Repo
   # This is a standard exit from Ruhoh.log.error which has already been addressed.
   # Most typically due to invalid blog configuration.
   rescue SystemExit
+    @error = "Ruhoh failed to compile your repo. Please check the logs."
+    false
+  rescue Exception => e
+    log(e)
+    @error = e
     false
   end
   
@@ -201,8 +208,12 @@ class Repo
   def clone
     if FileTest.directory? repo_path
       fresh_clone = "#{repo_path}-fresh"
-      return false unless system('git', 'clone', git_url, fresh_clone)
-    
+
+      unless system('git', 'clone', git_url, fresh_clone)
+        @error = "Could not `git clone #{git_url}`"
+        return false
+      end
+
       FileUtils.rm_r repo_path
       FileUtils.mv fresh_clone, repo_path
     else
