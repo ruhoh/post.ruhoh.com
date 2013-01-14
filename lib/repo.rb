@@ -3,6 +3,7 @@ require 'ruhoh/programs/compile'
 
 class Repo
   attr_accessor :user, :name, :custom_domain, :provider
+  attr_reader :error
 
   # These regex's are supposed to follow GitHub's allowed naming strategy.
 
@@ -18,6 +19,7 @@ class Repo
   
   def initialize
     @_frozen_snapshot = {}
+    @error = "There was a problem saving the repo."
   end
   
   def self.all(constraints)
@@ -32,7 +34,7 @@ class Repo
     repos.each { |r| dict[r["name"]] = r }
     dict
   end
-  
+
   # Find or build a repo instance with the provided constraint attributes.
   # Internally queries the persistance storage (currently Parse).
   # @_persistor object is stored to avoid duplicate database entries.
@@ -57,7 +59,9 @@ class Repo
     if (payload['git_url'].include?('github.com') rescue false)
       load_from_github_payload(payload)
     else
-      log("Payload does not appear to be from GitHub")
+      message = "Payload does not appear to be from GitHub"
+      log(message)
+      abort(message)
     end
   end
   
@@ -187,7 +191,6 @@ class Repo
       f.puts Time.now.utc
       f.puts message
     }
-    abort(message)
   end
 
   def store(obj)
@@ -242,8 +245,8 @@ class Repo
   def self.load_from_github_payload(payload)
     user = payload['repository']['owner']['name'] rescue nil
     name = payload['repository']['name'] rescue nil
-    log("User not found") unless user
-    log("Name not found") unless name
+    log("User not found") and abort("User not found") unless user
+    log("Name not found") and abort("Name not found") unless name
 
     repo = find_or_build({
       "user" => user,
