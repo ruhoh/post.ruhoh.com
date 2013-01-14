@@ -2,7 +2,7 @@ require 'ruhoh'
 require 'ruhoh/programs/compile'
 
 class Repo
-  attr_accessor :user, :name, :custom_domain, :provider
+  attr_accessor :user, :name, :custom_domain, :provider, :branch
   attr_reader :error
 
   # These regex's are supposed to follow GitHub's allowed naming strategy.
@@ -20,6 +20,7 @@ class Repo
   def initialize
     @_frozen_snapshot = {}
     @error = "There was a problem saving the repo."
+    @branch = 'master'
   end
   
   def self.all(constraints)
@@ -107,10 +108,10 @@ class Repo
     FileUtils.cd(repo_path) {
       system('git', 'fetch', 'origin')
 
-      if `git merge-base origin/master master`.empty?
+      if `git merge-base origin/#{@branch} #{@branch}`.empty?
         return clone 
       else
-        return system('git', 'reset', '--hard', 'origin/master')
+        return system('git', 'reset', '--hard', "origin/#{@branch}")
       end
     }
   end
