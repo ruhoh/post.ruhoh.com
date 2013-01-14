@@ -61,7 +61,6 @@ class Repo
       load_from_github_payload(payload)
     else
       message = "Payload does not appear to be from GitHub"
-      log(message)
       abort(message)
     end
   end
@@ -252,8 +251,7 @@ class Repo
   def self.load_from_github_payload(payload)
     user = payload['repository']['owner']['name'] rescue nil
     name = payload['repository']['name'] rescue nil
-    log("User not found") and abort("User not found") unless user
-    log("Name not found") and abort("Name not found") unless name
+    return false unless (user && name)
 
     repo = find_or_build({
       "user" => user,
