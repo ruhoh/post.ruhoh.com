@@ -16,4 +16,6 @@ gem 'rack-flash3'
 
 group :development do
   gem 'shotgun'
+  gem 'rspec', "~> 2.11"
+  gem 'rack-test'
 end
