@@ -54,11 +54,6 @@ message = nil
 </div>
 
 <table id="repositories">
-  <tr>
-    <th>My repository...</th>
-    <th>maps to...</th>
-    <th></th>
-  </tr>
 <% @repos.each do |repo| %>
   <tr data-id="<%= @repo_dictionary[repo['name']].id rescue "" %>">
     <td class="repository">

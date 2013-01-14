@@ -11,24 +11,27 @@
         color:#4B5640;
         height:100%;
       }
+      body {
+        position:relative;
+      }
       input {
-        border:0;
-        border-right:5px solid #DEA37A;
+        border:1px solid #C4E0A6;
         padding:5px;
-        font-size:20px;
+        font-size:1.1em;
         width:50%;
-        color:#D54C4A;
-        background-color:#FCF9CE;
+        color:#607848;
       }
       input.default {
         color:#777;
+      }
+      button {
+        font-size:1.1em;
       }
       .warn {color:#BD3737; font-weight:bold;}
 
       #signin {
         text-align:center;
       }
-      
       #greeting {
         position:absolute;
         padding-right:20px;
@@ -44,7 +47,6 @@
 
       #instructions, #signin {
         background:#C4E0A6;
-        margin-bottom:10px;
         padding:10px;
         color:#4B5640;
       }
@@ -66,11 +68,14 @@
         padding:7px;
         font-size:1.2em;
       }
+      #repositories tr:hover td {
+        background-color:#FCF9CE;
+      }
       #repositories td {
         padding:7px;
-        border-bottom:1px solid #C4E0A6;
         background-color:#FFF;
       }
+
       #repositories td.repository {
         width:33%;
       }
@@ -83,6 +88,41 @@
         width:100%;
         border-bottom: 5px solid #D54C4A;
       }
+      
+      #status-bar{
+        height:40px;
+      }
+      .alert {
+        height:40px;
+        line-height:3em;
+        font-weight:bold;
+        padding:0 10px;
+        border-left:40px solid #FFF;
+        border-top:1px solid #FFF;
+        text-align:right;
+        position:relative;
+      }
+      .alert span{
+        position:absolute;
+        top:0;
+        left:10px;
+        text-align:left;
+      }
+      .alert:before{
+        content: "[x]"
+      }
+      .alert-error {
+        border-color:#BD3737;
+        color:#BD3737;
+      }
+      .alert-notice {
+        border-color:#D54C4A;
+        color:#D54C4A;
+      }
+      .alert-success {
+        border-color:#4B5640;
+        color:#4B5640;
+      }
     </style>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
   </head>
@@ -92,5 +132,4 @@
     
     <div id="footer"></div>
   </body>
-  
 </html>  
