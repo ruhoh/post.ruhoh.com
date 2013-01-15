@@ -30,7 +30,7 @@ secret = File.join('config', 'secret.json')
 secret = File.open(secret) {|f| JSON.parse(f.read) }
 use Rack::Session::Cookie, secret: secret["key"]
 use OmniAuth::Builder do
-  github_config = File.join('config', 'github.json')
+  github_config = File.join('config', 'github2.json')
   next unless File.exist?(github_config)
   
   github_config = File.open(github_config) {|f| JSON.parse(f.read) }
