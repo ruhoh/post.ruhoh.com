@@ -9,7 +9,7 @@ gem 'omniauth'
 gem 'omniauth-github'
 gem 'ruhoh', '2.0.alpha', :git => 'https://github.com/ruhoh/ruhoh.rb.git'
 #gem 'ruhoh', :path => '/Users/jade/Dropbox/gems/ruhoh'
-gem 'psych', "1.3.4"
+gem 'psych', "1.3.2"
 gem 'octokit'
 gem "parse-ruby-client", "~> 0.1.10"
 gem 'rack-flash3'
