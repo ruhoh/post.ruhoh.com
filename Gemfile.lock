@@ -1,8 +1,8 @@
 GIT
   remote: git://github.com/ruhoh/ruhoh.rb.git
-  revision: f5fbbcad8fb0c05052de3b1d3ceef5dc985b9e8c
+  revision: 5cedf3c8f8089547f40ee1f9d954ccc11439438b
   specs:
-    ruhoh (2.0.alpha)
+    ruhoh (2.0.alpha.2)
       directory_watcher (~> 1.4)
       mustache (~> 0.99)
       nokogiri (~> 1.5)
@@ -107,7 +107,7 @@ DEPENDENCIES
   rack-test
   rake (~> 0.9)
   rspec (~> 2.11)
-  ruhoh (= 2.0.alpha)!
+  ruhoh (= 2.0.alpha.2)!
   shotgun
   sinatra (~> 1.3)
   sqlite3 (~> 1.3)
